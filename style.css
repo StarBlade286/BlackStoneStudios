@@ -1,0 +1,914 @@
+/* ═══════════════════════════════════════════════════════
+   THE ENDLESS CHAMBER — style.css
+   Paleta: dungeon noir + ouro + magia
+═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --bg:         #0a0a0f;
+  --panel:      #111118;
+  --panel2:     #1a1a2e;
+  --border:     #2a2a4a;
+  --gold:       #e8b84b;
+  --gold-dim:   #a07830;
+  --red:        #c0392b;
+  --red-bright: #e74c3c;
+  --purple:     #7b68ee;
+  --purple-dim: #4a3f9f;
+  --green:      #2ecc71;
+  --green-dim:  #1a8a4a;
+  --cyan:       #00bcd4;
+  --text:       #d0d0e0;
+  --text-dim:   #6a6a8a;
+  --legendary:  #ff9f43;
+  --rare:       #a29bfe;
+  --common:     #74b9ff;
+
+  --font-game: 'Press Start 2P', monospace;
+  --font-ui:   'Courier New', monospace;
+
+  --glow-gold:   0 0 10px #e8b84b88, 0 0 20px #e8b84b44;
+  --glow-red:    0 0 10px #c0392b88, 0 0 20px #c0392b44;
+  --glow-purple: 0 0 10px #7b68ee88, 0 0 20px #7b68ee44;
+  --glow-green:  0 0 10px #2ecc7188, 0 0 20px #2ecc7144;
+}
+
+/* ─── RESET & BASE ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  user-select: none;
+}
+
+/* ─── SCANLINES ────────────────────────────────────── */
+.scanlines {
+  position: fixed; inset: 0; z-index: 1000;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.15) 3px,
+    rgba(0,0,0,0.15) 4px
+  );
+}
+
+/* ─── PARTICLE CANVAS ──────────────────────────────── */
+#particleCanvas {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── SCREENS ──────────────────────────────────────── */
+.screen {
+  position: fixed; inset: 0; z-index: 10;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+.screen.active { display: flex; }
+
+/* ═══ TÍTULO ═══════════════════════════════════════ */
+#screen-title {
+  background:
+    radial-gradient(ellipse at 50% 0%, #1a1a3a 0%, transparent 70%),
+    var(--bg);
+}
+
+.title-content {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2rem;
+  z-index: 2;
+}
+
+.title-pre {
+  font-family: var(--font-game);
+  font-size: 0.6rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.5em;
+  margin-bottom: -1rem;
+}
+
+.title-main {
+  font-family: var(--font-game);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  color: var(--gold);
+  text-shadow: var(--glow-gold);
+  line-height: 1.4;
+  text-align: center;
+  animation: titlePulse 3s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%,100% { text-shadow: var(--glow-gold); }
+  50% { text-shadow: 0 0 30px #e8b84bcc, 0 0 60px #e8b84b66; }
+}
+
+.title-sub {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.5rem;
+  letter-spacing: 0.2em;
+}
+
+.title-buttons {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  width: 280px;
+}
+
+.title-essence {
+  font-size: 0.7rem;
+  color: var(--gold-dim);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+.title-decoration .rune {
+  position: absolute;
+  font-size: 2rem;
+  color: var(--purple-dim);
+  opacity: 0.3;
+  animation: runeFloat 4s ease-in-out infinite;
+}
+.rune:nth-child(2) { animation-delay: 1s; }
+.rune:nth-child(3) { animation-delay: 2s; }
+.rune:nth-child(4) { animation-delay: 3s; }
+
+@keyframes runeFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ═══ BOTÕES ════════════════════════════════════════ */
+.btn {
+  font-family: var(--font-game);
+  font-size: 0.55rem;
+  padding: 0.8rem 1.2rem;
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+.btn:hover { transform: scale(1.03); }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: #e8b84b11;
+}
+.btn-primary:hover {
+  background: #e8b84b22;
+  box-shadow: var(--glow-gold);
+}
+
+.btn-secondary {
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+.btn-secondary:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+  box-shadow: var(--glow-purple);
+}
+
+.btn-danger {
+  border-color: var(--red);
+  color: var(--red);
+  background: #c0392b11;
+}
+.btn-danger:hover {
+  background: #c0392b22;
+  box-shadow: var(--glow-red);
+}
+
+.btn-legendary {
+  border-color: var(--legendary);
+  color: var(--legendary);
+  background: #ff9f4311;
+  font-family: var(--font-game);
+  font-size: 0.55rem;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  animation: legendaryPulse 2s infinite;
+}
+@keyframes legendaryPulse {
+  0%,100% { box-shadow: none; }
+  50% { box-shadow: 0 0 20px #ff9f4388; }
+}
+
+.btn-back {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  border-color: var(--border);
+  color: var(--text-dim);
+  font-size: 0.5rem;
+}
+
+/* ═══ MELHORIAS ═════════════════════════════════════ */
+#screen-upgrades {
+  padding: 2rem;
+  background:
+    radial-gradient(ellipse at 50% 50%, #1a1a3a 0%, transparent 80%),
+    var(--bg);
+}
+
+.screen-header {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 700px;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.screen-header h2 {
+  font-family: var(--font-game);
+  font-size: 0.8rem;
+  color: var(--gold);
+}
+
+.essence-display {
+  font-family: var(--font-game);
+  font-size: 0.8rem;
+  color: var(--gold);
+  text-shadow: var(--glow-gold);
+}
+
+.upgrades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  width: 100%; max-width: 700px;
+  overflow-y: auto;
+  max-height: 65vh;
+  padding-right: 0.5rem;
+}
+
+.upgrade-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  transition: border-color 0.2s;
+}
+.upgrade-card:hover { border-color: var(--gold); }
+
+.upgrade-icon { font-size: 1.5rem; }
+.upgrade-name {
+  font-family: var(--font-game);
+  font-size: 0.45rem;
+  color: var(--gold);
+}
+.upgrade-level {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+.upgrade-effect {
+  font-size: 0.65rem;
+  color: var(--green);
+}
+.upgrade-cost {
+  font-size: 0.65rem;
+  color: var(--gold-dim);
+}
+.upgrade-btn {
+  margin-top: 0.25rem;
+  padding: 0.4rem 0.6rem;
+  font-family: var(--font-game);
+  font-size: 0.4rem;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.upgrade-btn:hover { background: #e8b84b22; }
+.upgrade-btn:disabled {
+  border-color: var(--border);
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
+/* ═══ HUD ═══════════════════════════════════════════ */
+#screen-game {
+  display: none;
+  flex-direction: column;
+  padding: 0;
+}
+#screen-game.active { display: flex; }
+
+#hud-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  min-height: 56px;
+  flex-shrink: 0;
+}
+
+.hud-left, .hud-right {
+  display: flex; align-items: center; gap: 1rem;
+}
+.hud-item {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.7rem;
+}
+
+.bar-label {
+  font-family: var(--font-game);
+  font-size: 0.4rem;
+  color: var(--text-dim);
+}
+.bar-track {
+  width: 80px; height: 8px;
+  background: #222;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  transition: width 0.3s;
+}
+.bar-hp { background: var(--green); }
+.bar-hp.low { background: var(--red); }
+.bar-hp.mid { background: var(--gold); }
+
+#hud-hp-text { font-size: 0.6rem; color: var(--text-dim); }
+
+.lives-display {
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+}
+
+.round-display { text-align: center; }
+.round-label {
+  font-family: var(--font-game);
+  font-size: 0.35rem;
+  color: var(--text-dim);
+  letter-spacing: 0.3em;
+}
+.round-number {
+  font-family: var(--font-game);
+  font-size: 1.4rem;
+  color: var(--gold);
+  text-shadow: var(--glow-gold);
+}
+
+.essence-icon { color: var(--purple); }
+
+/* ═══ ARENA ═════════════════════════════════════════ */
+#arena {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 50%, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+#arena-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.18;
+}
+
+/* ═══ PERSONAGENS ═══════════════════════════════════ */
+.character {
+  position: absolute;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px;
+  transition: transform 0.15s;
+}
+
+.char-sprite {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  background: var(--panel2);
+  border: 2px solid var(--border);
+  position: relative;
+}
+
+.player-char .char-sprite {
+  border-color: var(--green);
+  box-shadow: var(--glow-green);
+  animation: playerBob 1.5s ease-in-out infinite;
+}
+@keyframes playerBob {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.char-hp-bar {
+  width: 48px; height: 4px;
+  background: #333;
+  border: 1px solid #444;
+}
+.char-hp-fill {
+  height: 100%; background: var(--green);
+  transition: width 0.3s, background 0.3s;
+}
+
+/* Inimigos */
+.enemy {
+  position: absolute;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  cursor: pointer;
+  transition: filter 0.1s;
+}
+.enemy:hover { filter: brightness(1.3); }
+.enemy.shaking { animation: enemyShake 0.2s; }
+@keyframes enemyShake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.enemy-sprite {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  background: var(--panel2);
+  border: 2px solid var(--red);
+  box-shadow: var(--glow-red);
+}
+.enemy-sprite.boss-sprite {
+  width: 80px; height: 80px;
+  font-size: 2.8rem;
+  border-color: var(--legendary);
+  box-shadow: 0 0 20px #ff9f43aa;
+  animation: bossFloat 2s ease-in-out infinite;
+}
+@keyframes bossFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+.enemy-hp-bar {
+  width: 48px; height: 4px;
+  background: #333; border: 1px solid #444;
+}
+.enemy-hp-fill {
+  height: 100%; background: var(--red-bright);
+  transition: width 0.2s;
+}
+.enemy-name-tag {
+  font-size: 0.45rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  font-family: var(--font-ui);
+}
+
+/* ═══ EFEITOS / DANO ════════════════════════════════ */
+.damage-number {
+  position: absolute;
+  font-family: var(--font-game);
+  font-size: 0.7rem;
+  pointer-events: none;
+  animation: floatUp 0.9s forwards;
+  z-index: 100;
+}
+.damage-number.crit { font-size: 1rem; color: var(--gold); }
+.damage-number.heal { color: var(--green); }
+.damage-number.dmg  { color: var(--red-bright); }
+
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-50px); }
+}
+
+.hit-flash {
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.4);
+  pointer-events: none;
+  animation: flashOut 0.2s forwards;
+}
+@keyframes flashOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Projectiles */
+.projectile {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px #e8b84b88;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Debug room visuals */
+#debug-room-outer {
+  border: 2px dashed rgba(232,184,75,0.35);
+  background: rgba(232,184,75,0.03);
+  box-shadow: 0 0 16px rgba(232,184,75,0.12) inset;
+  pointer-events: none;
+  z-index: 120;
+}
+#debug-room-inner {
+  border: 2px solid rgba(120,170,255,0.45);
+  background: rgba(120,170,255,0.04);
+  box-shadow: 0 0 16px rgba(120,170,255,0.12) inset;
+  pointer-events: none;
+  z-index: 125;
+}
+
+/* ═══ COMBAT LOG ════════════════════════════════════ */
+#combat-log {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 260px;
+  max-height: 120px;
+  overflow: hidden;
+  padding: 0.5rem;
+  background: rgba(10,10,15,0.75);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.log-entry {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+  opacity: 0;
+  animation: logAppear 0.3s forwards;
+}
+.log-entry.log-dmg { color: var(--red-bright); }
+.log-entry.log-heal { color: var(--green); }
+.log-entry.log-gold { color: var(--gold); }
+.log-entry.log-boss { color: var(--legendary); }
+.log-entry.log-item { color: var(--purple); }
+
+@keyframes logAppear {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══ HUD INFERIOR ══════════════════════════════════ */
+#hud-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  min-height: 70px;
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.stats-mini {
+  display: flex; gap: 1rem;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+.stats-mini span { color: var(--text-dim); }
+.stats-mini span b { color: var(--text); }
+
+#items-bar {
+  display: flex; gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+  overflow-x: auto;
+  padding: 0 0.5rem;
+}
+
+.item-slot {
+  width: 40px; height: 40px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  position: relative;
+  cursor: default;
+  flex-shrink: 0;
+}
+.item-slot.common  { border-color: var(--common); }
+.item-slot.rare    { border-color: var(--rare); }
+.item-slot.legendary { border-color: var(--legendary); box-shadow: 0 0 8px #ff9f4366; }
+
+.item-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.5rem;
+  white-space: nowrap;
+  z-index: 200;
+}
+.item-slot:hover .item-tooltip { display: block; }
+
+.action-buttons {
+  display: flex; gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  font-family: var(--font-game);
+  font-size: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--gold);
+  background: #e8b84b11;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  line-height: 1.5;
+}
+.btn-action:hover:not(:disabled) {
+  background: #e8b84b22;
+  box-shadow: var(--glow-gold);
+}
+.btn-action:disabled {
+  border-color: var(--border);
+  color: var(--text-dim);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.btn-action small { font-size: 0.35rem; color: var(--text-dim); }
+
+/* ═══ MODAIS ════════════════════════════════════════ */
+.modal {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.85);
+  display: flex; align-items: center; justify-content: center;
+}
+.modal.hidden { display: none; }
+
+.modal-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  max-width: 480px;
+  width: 90%;
+  display: flex; flex-direction: column; gap: 1rem;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+
+.modal-title {
+  font-family: var(--font-game);
+  font-size: 0.65rem;
+  color: var(--gold);
+  text-align: center;
+}
+.modal-sub {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.reward-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.reward-card {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.reward-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+.reward-card-icon { font-size: 1.4rem; }
+.reward-card-title {
+  font-family: var(--font-game);
+  font-size: 0.4rem;
+  color: var(--gold);
+}
+.reward-card-desc { font-size: 0.55rem; color: var(--text-dim); }
+
+/* Evento */
+.modal-event-box { border-color: var(--purple); }
+.event-icon { font-size: 3rem; text-align: center; }
+.event-desc { font-size: 0.65rem; color: var(--text-dim); text-align: center; }
+
+/* Boss */
+.modal-boss-box {
+  border-color: var(--legendary);
+  box-shadow: 0 0 40px #ff9f4344;
+}
+.boss-warning {
+  font-family: var(--font-game);
+  font-size: 0.5rem;
+  color: var(--red);
+  text-align: center;
+  animation: blinkWarn 0.7s step-end infinite;
+}
+@keyframes blinkWarn {
+  0%,100% { opacity: 1; } 50% { opacity: 0; }
+}
+.boss-name {
+  font-family: var(--font-game);
+  font-size: 0.9rem;
+  color: var(--legendary);
+  text-align: center;
+  text-shadow: 0 0 20px #ff9f43aa;
+}
+.boss-lore {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-align: center;
+  font-style: italic;
+}
+.boss-hp-track {
+  height: 12px;
+  background: #222;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.boss-hp-bar {
+  height: 100%;
+  background: var(--legendary);
+  transition: width 0.4s;
+}
+.boss-hp-text {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* ═══ GAME OVER ══════════════════════════════════════ */
+#screen-gameover {
+  background: radial-gradient(ellipse at 50% 50%, #2a0a0a 0%, var(--bg) 70%);
+}
+.gameover-content {
+  display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+}
+.gameover-skull {
+  font-size: 5rem;
+  animation: skullPulse 2s ease-in-out infinite;
+}
+@keyframes skullPulse {
+  0%,100% { text-shadow: 0 0 20px #c0392b88; }
+  50% { text-shadow: 0 0 40px #c0392bcc, 0 0 80px #c0392b44; }
+}
+.gameover-title {
+  font-family: var(--font-game);
+  font-size: clamp(1rem, 4vw, 2rem);
+  color: var(--red-bright);
+  text-shadow: var(--glow-red);
+}
+.gameover-stats {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 2;
+}
+.gameover-essence {
+  font-family: var(--font-game);
+  font-size: 0.7rem;
+  color: var(--gold);
+  text-shadow: var(--glow-gold);
+}
+.gameover-buttons {
+  display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center;
+}
+
+/* ═══ VITÓRIA ════════════════════════════════════════ */
+#screen-victory {
+  background: radial-gradient(ellipse at 50% 50%, #1a2a0a 0%, var(--bg) 70%);
+}
+.victory-content {
+  display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+}
+.victory-crown { font-size: 5rem; animation: crownFloat 2s ease-in-out infinite; }
+@keyframes crownFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.victory-title {
+  font-family: var(--font-game);
+  font-size: 2rem;
+  color: var(--green);
+  text-shadow: var(--glow-green);
+}
+.victory-sub {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 2;
+}
+.victory-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+/* ═══ CRÉDITOS ═══════════════════════════════════════ */
+#screen-credits {
+  gap: 1rem;
+  text-align: center;
+}
+#screen-credits h2 {
+  font-family: var(--font-game);
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+#screen-credits p { font-size: 0.75rem; color: var(--text-dim); }
+
+/* ─── NOTIFICATION TOAST ───────────────────────────── */
+#toast-container {
+  position: fixed;
+  top: 80px; right: 1rem;
+  z-index: 900;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  pointer-events: none;
+}
+.toast {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  font-size: 0.55rem;
+  max-width: 220px;
+  animation: toastIn 0.3s ease, toastOut 0.4s 2.6s forwards;
+}
+.toast.toast-gold   { border-color: var(--gold); color: var(--gold); }
+.toast.toast-red    { border-color: var(--red); color: var(--red-bright); }
+.toast.toast-green  { border-color: var(--green); color: var(--green); }
+.toast.toast-purple { border-color: var(--purple); color: var(--purple); }
+.toast.toast-legendary { border-color: var(--legendary); color: var(--legendary); }
+
+@keyframes toastIn  { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+@keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateX(30px); } }
+
+/* ─── SCROLLBAR ────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ─── RESPONSIVE ───────────────────────────────────── */
+@media (max-width: 600px) {
+  .stats-mini { display: none; }
+  .title-main { font-size: 1.2rem; }
+  #combat-log { width: 160px; font-size: 0.45rem; }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   NOVOS EFEITOS DE GAMEPLAY LOOP (MAIS ESTILO)
+═══════════════════════════════════════════════════════ */
+
+/* 1. Efeito de abanar a arena (Screen Shake) */
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(0px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(2px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(2px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.shake-active {
+  animation: shake 0.15s ease-in-out;
+}
+
+/* 2. Números de Dano Flutuantes */
+.dmg-text {
+  position: absolute;
+  font-family: var(--font-game);
+  font-size: 0.65rem;
+  color: #ffffff;
+  text-shadow: 2px 2px #000000;
+  pointer-events: none;
+  z-index: 150;
+  animation: floatUp 0.7s ease-out forwards;
+}
+
+.crit-text {
+  color: var(--gold) !important;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(232, 184, 75, 0.6), 2px 2px #000;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-25px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(-45px) scale(0.8); opacity: 0; }
+}
+
+/* 3. Flash de Impacto Visual (Filtro de alto brilho) */
+.hit-flash {
+  filter: brightness(3) saturate(0) contrast(2) !important;
+  transition: filter 0.05s ease-out;
+}
