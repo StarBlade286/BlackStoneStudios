@@ -165,7 +165,7 @@ const Game = {
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
     if(id === "screen-upgrades") renderUpgradesScreen();
-    if(id === "screen-game") renderDebugRoom();
+    if(id === "screen-game") { renderDebugRoom(); positionPlayer(); }
     if(id === "screen-title")    document.getElementById("title-essence-count").textContent = State.permanentEssence;
   },
 
@@ -1148,7 +1148,13 @@ window.addEventListener("DOMContentLoaded", ()=>{
   State.load();
   document.getElementById("title-essence-count").textContent = State.permanentEssence;
   initParticles();
-  positionPlayer();
+  // Debug visuals when URL contains ?debug
+  try {
+    if(window.location && window.location.search && window.location.search.indexOf('debug') !== -1) {
+      document.body.classList.add('debug-visuals');
+      console.log('Debug visuals enabled via URL parameter');
+    }
+  } catch(e){}
   Game.showScreen("screen-title");
 
   // Keyboard shortcuts
